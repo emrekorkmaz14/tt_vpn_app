@@ -14,7 +14,7 @@ class HomeView extends StatelessWidget {
     final controller = Get.put(HomeController());
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           AppHeader(
@@ -38,7 +38,7 @@ class HomeView extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildConnectionTimeCard(controller),
+                  _buildConnectionTimeCard(context, controller),
                   const SizedBox(height: AppDimensions.paddingL),
                   Obx(() {
                     final isConnecting =
@@ -46,52 +46,54 @@ class HomeView extends StatelessWidget {
                     final connectedCountry = controller.connectedCountry.value;
                     final connectionStatus = controller.connectionStatus.value;
                     if (isConnecting) {
-                      return _buildConnectingCard(controller);
+                      return _buildConnectingCard(context, controller);
                     } else if (connectedCountry != null &&
                         connectionStatus == ConnectionStatus.connected) {
                       return _buildConnectedCountryCard(
-                          controller, connectedCountry);
+                          context, controller, connectedCountry);
                     } else {
-                      return _buildDisconnectedCard();
+                      return _buildDisconnectedCard(context);
                     }
                   }),
-                  _buildSpeedStatsCard(controller),
+                  _buildSpeedStatsCard(context, controller),
                   const SizedBox(height: AppDimensions.paddingL),
-                  _buildFreeLocationsHeader(controller),
+                  _buildFreeLocationsHeader(context, controller),
                   const SizedBox(height: AppDimensions.paddingS),
-                  _buildCountriesList(controller),
+                  _buildCountriesList(context, controller),
                 ],
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(controller),
+      bottomNavigationBar: _buildBottomNavigationBar(context, controller),
     );
   }
 
-  Widget _buildConnectionTimeCard(HomeController controller) {
+  Widget _buildConnectionTimeCard(BuildContext context, HomeController controller) {
     return Column(
       children: [
         Text(
           AppStrings.connectingTime,
-          style: AppTextStyles.label,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
+          ),
         ),
         Obx(() => Text(
               controller.formattedConnectionTime,
-              style: AppTextStyles.timerText,
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
             )),
       ],
     );
   }
 
   Widget _buildConnectedCountryCard(
-      HomeController controller, Country country) {
+      BuildContext context, HomeController controller, Country country) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       margin: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXXL,
@@ -124,12 +126,17 @@ class HomeView extends StatelessWidget {
                 children: [
                   Text(
                     country.name,
-                    style: AppTextStyles.countryName,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   if (country.city != null && country.city!.isNotEmpty)
                     Text(
                       country.city!,
-                      style: AppTextStyles.cityName,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      ),
                     ),
                 ],
               ),
@@ -141,10 +148,17 @@ class HomeView extends StatelessWidget {
               children: [
                 Text(
                   AppStrings.stealth,
-                  style: AppTextStyles.caption,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  ),
                 ),
                 const SizedBox(width: AppDimensions.paddingS),
-                Text('${country.strength}%', style: AppTextStyles.bodyMedium),
+                Text(
+                  '${country.strength}%',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ],
@@ -153,12 +167,9 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildDisconnectedCard() {
+  Widget _buildDisconnectedCard(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       margin: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXXL,
@@ -217,8 +228,9 @@ class HomeView extends StatelessWidget {
                         opacity: value,
                         child: Text(
                           "Not Connected",
-                          style: AppTextStyles.countryName.copyWith(
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: AppColors.disconnected,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       );
@@ -233,7 +245,9 @@ class HomeView extends StatelessWidget {
                         opacity: value,
                         child: Text(
                           "Choose a location",
-                          style: AppTextStyles.cityName,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          ),
                         ),
                       );
                     },
@@ -264,12 +278,9 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildConnectingCard(HomeController controller) {
+  Widget _buildConnectingCard(BuildContext context, HomeController controller) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       margin: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXXL,
@@ -350,8 +361,9 @@ class HomeView extends StatelessWidget {
                     builder: (context, value, child) {
                       return Text(
                         "Connecting${"." * ((value % 4))}",
-                        style: AppTextStyles.countryName.copyWith(
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: AppColors.connecting,
+                          fontWeight: FontWeight.w600,
                         ),
                       );
                     },
@@ -370,7 +382,9 @@ class HomeView extends StatelessWidget {
                             connectingCountry.isNotEmpty
                                 ? "to $connectingCountry"
                                 : "Please wait",
-                            style: AppTextStyles.cityName,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                            ),
                           ),
                         );
                       },
@@ -407,16 +421,13 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildSpeedStatsCard(HomeController controller) {
+  Widget _buildSpeedStatsCard(BuildContext context, HomeController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-            ),
-            color: AppColors.cardBackground,
+            color: Theme.of(context).colorScheme.surface,
             elevation: 2,
             margin: const EdgeInsets.fromLTRB(
               AppDimensions.paddingXXL,
@@ -427,6 +438,7 @@ class HomeView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: _buildSpeedItem(
+                context,
                 controller,
                 AppAssets.iconImport,
                 AppStrings.download,
@@ -438,10 +450,7 @@ class HomeView extends StatelessWidget {
         ),
         Expanded(
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-            ),
-            color: AppColors.cardBackground,
+            color: Theme.of(context).colorScheme.surface,
             elevation: 2,
             margin: const EdgeInsets.fromLTRB(
               AppDimensions.paddingXS,
@@ -452,6 +461,7 @@ class HomeView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: _buildSpeedItem(
+                context,
                 controller,
                 AppAssets.iconExport,
                 AppStrings.upload,
@@ -466,6 +476,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildSpeedItem(
+    BuildContext context,
     HomeController controller,
     String iconPath,
     String label,
@@ -494,12 +505,16 @@ class HomeView extends StatelessWidget {
           children: [
             Text(
               label,
-              style: AppTextStyles.caption,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
             ),
             Obx(() => Text(
                   '${speedGetter()} ${AppStrings.mbUnit}',
-                  style:
-                      AppTextStyles.speedText.copyWith(color: AppColors.black),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 )),
           ],
         ),
@@ -507,7 +522,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildFreeLocationsHeader(HomeController controller) {
+  Widget _buildFreeLocationsHeader(BuildContext context, HomeController controller) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXL,
@@ -519,18 +534,20 @@ class HomeView extends StatelessWidget {
         children: [
           Text(
             '${AppStrings.freeLocations} (${controller.countries.length})',
-            style: AppTextStyles.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
           const Spacer(),
           Container(
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(AppDimensions.radiusS),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.info,
               size: AppDimensions.iconS,
-              color: AppColors.light,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             ),
           ),
         ],
@@ -538,7 +555,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildCountriesList(HomeController controller) {
+  Widget _buildCountriesList(BuildContext context, HomeController controller) {
     return Obx(() {
       final filteredCountries = controller.filteredCountries;
       return ListView.builder(
@@ -548,18 +565,15 @@ class HomeView extends StatelessWidget {
         itemCount: filteredCountries.length,
         itemBuilder: (context, index) {
           final country = filteredCountries[index];
-          return _buildCountryCard(controller, country);
+          return _buildCountryCard(context, controller, country);
         },
       );
     });
   }
 
-  Widget _buildCountryCard(HomeController controller, Country country) {
+  Widget _buildCountryCard(BuildContext context, HomeController controller, Country country) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       margin: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXL,
@@ -592,32 +606,37 @@ class HomeView extends StatelessWidget {
                 children: [
                   Text(
                     country.name,
-                    style: AppTextStyles.countryName,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   Text(
                     '${country.locationCount} ${AppStrings.locations}',
-                    style: AppTextStyles.caption,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    ),
                   ),
                 ],
               ),
             ),
 
             // Connection Button
-            _buildConnectionButton(controller, country),
+            _buildConnectionButton(context, controller, country),
             const SizedBox(width: AppDimensions.paddingS),
-            _buildArrowButton(),
+            _buildArrowButton(context),
           ],
         ),
       ),
     );
   }
 
-  Container _buildArrowButton() {
+  Container _buildArrowButton(BuildContext context) {
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: AppColors.black.withOpacity(0.06),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.06),
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
       ),
       alignment: Alignment.center,
@@ -625,13 +644,19 @@ class HomeView extends StatelessWidget {
         child: SizedBox(
           width: AppDimensions.iconS,
           height: AppDimensions.iconS,
-          child: SvgPicture.asset("assets/icons/arrow-right.svg"),
+          child: SvgPicture.asset(
+            "assets/icons/arrow-right.svg",
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).colorScheme.onSurface,
+              BlendMode.srcIn,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildConnectionButton(HomeController controller, Country country) {
+  Widget _buildConnectionButton(BuildContext context, HomeController controller, Country country) {
     return Obx(() {
       final isConnected = country.isConnected;
       final isConnecting =
@@ -672,14 +697,14 @@ class HomeView extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: isConnected
-                  ? AppColors.primary
-                  : AppColors.black.withOpacity(0.06),
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.06),
               borderRadius: BorderRadius.circular(AppDimensions.radiusL),
             ),
             alignment: Alignment.center,
             child: SvgPicture.asset(
               "assets/icons/timer.svg",
-              color: isConnected ? AppColors.white : AppColors.black,
+              color: isConnected ? AppColors.white : Theme.of(context).colorScheme.onSurface,
               width: AppDimensions.iconM,
               height: AppDimensions.iconM,
             )),
@@ -687,15 +712,15 @@ class HomeView extends StatelessWidget {
     });
   }
 
-  Widget _buildBottomNavigationBar(HomeController controller) {
+  Widget _buildBottomNavigationBar(BuildContext context, HomeController controller) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: AppDimensions.elevationM,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -709,18 +734,21 @@ class HomeView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildBottomNavItem(
+                context,
                 controller,
                 0,
                 AppAssets.iconMap,
                 AppStrings.countries,
               ),
               _buildBottomNavItem(
+                context,
                 controller,
                 1,
                 AppAssets.iconRadar,
                 AppStrings.disconnect,
               ),
               _buildBottomNavItem(
+                context,
                 controller,
                 2,
                 AppAssets.iconSetting,
@@ -734,6 +762,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildBottomNavItem(
+    BuildContext context,
     HomeController controller,
     int index,
     String iconPath,
@@ -760,15 +789,15 @@ class HomeView extends StatelessWidget {
                 width: AppDimensions.iconNavBar,
                 height: AppDimensions.iconNavBar,
                 colorFilter: ColorFilter.mode(
-                  isSelected ? AppColors.primary : AppColors.medium,
+                  isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   BlendMode.srcIn,
                 ),
               ),
               const SizedBox(height: AppDimensions.paddingXS),
               Text(
                 label,
-                style: AppTextStyles.label.copyWith(
-                  color: isSelected ? AppColors.primary : AppColors.medium,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),

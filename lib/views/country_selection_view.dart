@@ -13,7 +13,7 @@ class CountrySelectionView extends StatelessWidget {
     final controller = Get.put(CountrySelectionController());
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           AppHeader(
@@ -27,19 +27,20 @@ class CountrySelectionView extends StatelessWidget {
             height: AppDimensions.paddingXL,
           ),
           Expanded(
-            child: _buildCountriesListSection(controller),
+            child: _buildCountriesListSection(context, controller),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCountriesListSection(CountrySelectionController controller) {
+  Widget _buildCountriesListSection(
+      BuildContext context, CountrySelectionController controller) {
     return Obx(() {
       if (controller.isLoading.value) {
         return Center(
           child: CircularProgressIndicator(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         );
       }
@@ -47,7 +48,7 @@ class CountrySelectionView extends StatelessWidget {
       final filteredCountries = controller.filteredCountries;
 
       if (filteredCountries.isEmpty) {
-        return const SizedBox.shrink();
+        return _buildEmptyState(context, controller);
       }
 
       return Column(
@@ -63,9 +64,12 @@ class CountrySelectionView extends StatelessWidget {
             ),
             child: Text(
               '${AppStrings.availableCountries} (${filteredCountries.length})',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.medium,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.7),
+                  ),
             ),
           ),
 
@@ -73,7 +77,8 @@ class CountrySelectionView extends StatelessWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => controller.refreshCountries(),
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.paddingXL,
@@ -81,7 +86,7 @@ class CountrySelectionView extends StatelessWidget {
                 itemCount: filteredCountries.length,
                 itemBuilder: (context, index) {
                   final country = filteredCountries[index];
-                  return _buildCountryCard(controller, country);
+                  return _buildCountryCard(context, controller, country);
                 },
               ),
             ),
@@ -91,13 +96,79 @@ class CountrySelectionView extends StatelessWidget {
     });
   }
 
-  Widget _buildCountryCard(
+  Widget _buildEmptyState(
+      BuildContext context, CountrySelectionController controller) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingXL),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.search_off_rounded,
+                size: 40,
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+            Text(
+              AppStrings.noCountriesFound,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            Text(
+              AppStrings.tryDifferentSearch,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.7),
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+            ElevatedButton(
+              onPressed: () => controller.clearSearch(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.paddingL,
+                  vertical: AppDimensions.paddingM,
+                ),
+              ),
+              child: Text(
+                AppStrings.clearSearch,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCountryCard(BuildContext context,
       CountrySelectionController controller, Country country) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
       ),
-      color: AppColors.white,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: InkWell(
@@ -129,26 +200,44 @@ class CountrySelectionView extends StatelessWidget {
                   children: [
                     Text(
                       country.name,
-                      style: AppTextStyles.countryName,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                     ),
                     const SizedBox(height: 2),
                     Row(
                       children: [
                         Text(
                           '${country.locationCount} ${AppStrings.locations}',
-                          style: AppTextStyles.caption,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                         if (country.city != null &&
                             country.city!.isNotEmpty) ...[
                           Text(
                             ' • ',
-                            style: AppTextStyles.caption,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.7),
+                                    ),
                           ),
                           Text(
                             country.city!,
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.primary,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                         ],
                       ],
@@ -173,10 +262,10 @@ class CountrySelectionView extends StatelessWidget {
                     ),
                     child: Text(
                       '${country.strength}%',
-                      style: AppTextStyles.caption.copyWith(
-                        color: _getSignalColor(country.strength),
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: _getSignalColor(country.strength),
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -187,10 +276,10 @@ class CountrySelectionView extends StatelessWidget {
               const SizedBox(width: AppDimensions.paddingS),
 
               // Arrow
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: AppDimensions.iconS,
-                color: AppColors.light,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
               ),
             ],
           ),

@@ -30,9 +30,7 @@ class AppHeader extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/headerBg.png"),
-          fit: BoxFit.cover,
-        ),
+            image: AssetImage("assets/images/headerBg.png"), fit: BoxFit.cover),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(36),
           bottomRight: Radius.circular(36),
@@ -58,7 +56,11 @@ class AppHeader extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
-                      style: AppTextStyles.h3.copyWith(color: AppColors.white),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -107,7 +109,7 @@ class AppHeader extends StatelessWidget {
         child: leftIcon!,
       );
     } else {
-      return const SizedBox.shrink();
+      return const SizedBox(width: 48); // Placeholder for symmetry
     }
   }
 
@@ -122,7 +124,7 @@ class AppHeader extends StatelessWidget {
         child: rightIcon!,
       );
     } else {
-      return const SizedBox.shrink();
+      return const SizedBox(width: 48); // Placeholder for symmetry
     }
   }
 
@@ -133,20 +135,37 @@ class AppHeader extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         alignment: Alignment.center,
         child: TextField(
           controller: searchController,
-          style: AppTextStyles.bodyLarge,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimaryLight,
+            fontFamily: 'Gilroy',
+          ),
           textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             hintText: searchHint ?? AppStrings.searchHint,
-            hintStyle: AppTextStyles.searchHint,
+            hintStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textHintLight,
+              fontFamily: 'Gilroy',
+            ),
             suffixIcon: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: SvgPicture.asset(
                 AppAssets.iconSearch,
-                colorFilter: ColorFilter.mode(
+                colorFilter: const ColorFilter.mode(
                   AppColors.medium,
                   BlendMode.srcIn,
                 ),
@@ -169,6 +188,13 @@ class AppHeader extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -180,13 +206,22 @@ class AppHeader extends StatelessWidget {
                 Expanded(
                   child: Text(
                     searchHint ?? AppStrings.searchHint,
-                    style: AppTextStyles.searchHint,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textHintLight,
+                      fontFamily: 'Gilroy',
+                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(AppDimensions.paddingXS),
                   child: SvgPicture.asset(
                     AppAssets.iconSearch,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.medium,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ],

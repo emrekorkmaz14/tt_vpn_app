@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tt_vpn_app/controllers/settings_controller.dart';
+import 'package:tt_vpn_app/controllers/theme_controllers.dart';
 import 'package:tt_vpn_app/constants/constants.dart';
 import 'package:tt_vpn_app/views/widgets/app_header.dart';
 
@@ -10,9 +11,10 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(SettingsController());
+    final themeController = Get.find<ThemeController>();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           const AppHeader(
@@ -25,23 +27,23 @@ class SettingsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle(AppStrings.appearance),
-                  _buildThemeSection(controller),
+                  _buildSectionTitle(context, AppStrings.appearance),
+                  _buildThemeSection(context, themeController),
                   
                   const SizedBox(height: AppDimensions.paddingXL),
                   
-                  _buildSectionTitle(AppStrings.vpnSettings),
-                  _buildVPNSettings(controller),
+                  _buildSectionTitle(context, AppStrings.vpnSettings),
+                  _buildVPNSettings(context, controller),
                   
                   const SizedBox(height: AppDimensions.paddingXL),
                   
-                  _buildSectionTitle(AppStrings.general),
-                  _buildGeneralSettings(controller),
+                  _buildSectionTitle(context, AppStrings.general),
+                  _buildGeneralSettings(context, controller),
                   
                   const SizedBox(height: AppDimensions.paddingXL),
                   
-                  _buildSectionTitle(AppStrings.about),
-                  _buildAboutSection(controller),
+                  _buildSectionTitle(context, AppStrings.about),
+                  _buildAboutSection(context, controller),
                 ],
               ),
             ),
@@ -51,22 +53,22 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: Text(
         title,
-        style: AppTextStyles.bodyLarge.copyWith(
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          color: AppColors.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
   }
 
-  Widget _buildThemeSection(SettingsController controller) {
+  Widget _buildThemeSection(BuildContext context, ThemeController themeController) {
     return Card(
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -76,17 +78,27 @@ class SettingsView extends StatelessWidget {
         child: Column(
           children: [
             _buildThemeOption(
-              controller,
+              context,
+              themeController,
               AppStrings.lightTheme,
               Icons.light_mode,
-              false,
+              ThemeMode.light,
             ),
             const Divider(height: 1),
             _buildThemeOption(
-              controller,
+              context,
+              themeController,
               AppStrings.darkTheme,
               Icons.dark_mode,
-              true,
+              ThemeMode.dark,
+            ),
+            const Divider(height: 1),
+            _buildThemeOption(
+              context,
+              themeController,
+              AppStrings.systemTheme,
+              Icons.brightness_auto,
+              ThemeMode.system,
             ),
           ],
         ),
@@ -95,16 +107,17 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildThemeOption(
-    SettingsController controller,
+    BuildContext context,
+    ThemeController themeController,
     String title,
     IconData icon,
-    bool isDark,
+    ThemeMode mode,
   ) {
     return Obx(() {
-      final isSelected = controller.themeController.isDarkMode == isDark;
+      final isSelected = themeController.themeMode == mode;
       
       return InkWell(
-        onTap: () => controller.themeController.setTheme(isDark),
+        onTap: () => themeController.setThemeMode(mode),
         borderRadius: BorderRadius.circular(AppDimensions.radiusM),
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -117,13 +130,13 @@ class SettingsView extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.paddingS),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? AppColors.primary.withOpacity(0.1)
-                      : AppColors.textSecondary.withOpacity(0.1),
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppDimensions.radiusS),
                 ),
                 child: Icon(
                   icon,
-                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                   size: AppDimensions.iconM,
                 ),
               ),
@@ -131,8 +144,8 @@ class SettingsView extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
@@ -140,7 +153,7 @@ class SettingsView extends StatelessWidget {
               if (isSelected)
                 Icon(
                   Icons.check_circle,
-                  color: AppColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   size: AppDimensions.iconM,
                 ),
             ],
@@ -150,9 +163,9 @@ class SettingsView extends StatelessWidget {
     });
   }
 
-  Widget _buildVPNSettings(SettingsController controller) {
+  Widget _buildVPNSettings(BuildContext context, SettingsController controller) {
     return Card(
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -162,6 +175,7 @@ class SettingsView extends StatelessWidget {
         child: Column(
           children: [
             _buildSwitchTile(
+              context,
               controller,
               AppStrings.autoConnect,
               AppStrings.autoConnectDescription,
@@ -171,6 +185,7 @@ class SettingsView extends StatelessWidget {
             ),
             const Divider(height: 1),
             _buildSwitchTile(
+              context,
               controller,
               AppStrings.killSwitch,
               AppStrings.killSwitchDescription,
@@ -179,16 +194,16 @@ class SettingsView extends StatelessWidget {
               controller.toggleKillSwitch,
             ),
             const Divider(height: 1),
-            _buildProtocolSelector(controller),
+            _buildProtocolSelector(context, controller),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGeneralSettings(SettingsController controller) {
+  Widget _buildGeneralSettings(BuildContext context, SettingsController controller) {
     return Card(
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -198,6 +213,7 @@ class SettingsView extends StatelessWidget {
         child: Column(
           children: [
             _buildSwitchTile(
+              context,
               controller,
               AppStrings.notifications,
               AppStrings.notificationsDescription,
@@ -211,9 +227,9 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildAboutSection(SettingsController controller) {
+  Widget _buildAboutSection(BuildContext context, SettingsController controller) {
     return Card(
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -223,6 +239,7 @@ class SettingsView extends StatelessWidget {
         child: Column(
           children: [
             _buildActionTile(
+              context,
               AppStrings.aboutApp,
               AppStrings.aboutAppDescription,
               Icons.info,
@@ -230,6 +247,7 @@ class SettingsView extends StatelessWidget {
             ),
             const Divider(height: 1),
             _buildActionTile(
+              context,
               AppStrings.clearData,
               AppStrings.clearDataShortDescription,
               Icons.delete,
@@ -243,6 +261,7 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildSwitchTile(
+    BuildContext context,
     SettingsController controller,
     String title,
     String description,
@@ -261,12 +280,12 @@ class SettingsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppDimensions.paddingS),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               ),
               child: Icon(
                 icon,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppDimensions.iconM,
               ),
             ),
@@ -277,14 +296,14 @@ class SettingsView extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: AppTextStyles.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -292,7 +311,7 @@ class SettingsView extends StatelessWidget {
             Switch(
               value: value.value,
               onChanged: onChanged,
-              activeColor: AppColors.primary,
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
           ],
         ),
@@ -300,7 +319,7 @@ class SettingsView extends StatelessWidget {
     });
   }
 
-  Widget _buildProtocolSelector(SettingsController controller) {
+  Widget _buildProtocolSelector(BuildContext context, SettingsController controller) {
     return Obx(() {
       return Padding(
         padding: const EdgeInsets.symmetric(
@@ -312,12 +331,12 @@ class SettingsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppDimensions.paddingS),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               ),
               child: Icon(
                 Icons.vpn_lock,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppDimensions.iconM,
               ),
             ),
@@ -328,14 +347,14 @@ class SettingsView extends StatelessWidget {
                 children: [
                   Text(
                     AppStrings.protocol,
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     AppStrings.protocolDescription,
-                    style: AppTextStyles.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -348,8 +367,8 @@ class SettingsView extends StatelessWidget {
                 }
               },
               underline: const SizedBox.shrink(),
-              style: AppTextStyles.bodyMedium,
-              dropdownColor: AppColors.cardBackground,
+              style: Theme.of(context).textTheme.bodyMedium,
+              dropdownColor: Theme.of(context).colorScheme.surface,
               items: controller.protocols.map((String protocol) {
                 return DropdownMenuItem<String>(
                   value: protocol,
@@ -364,6 +383,7 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildActionTile(
+    BuildContext context,
     String title,
     String description,
     IconData icon,
@@ -385,12 +405,12 @@ class SettingsView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isDestructive 
                     ? AppColors.disconnected.withOpacity(0.1)
-                    : AppColors.primary.withOpacity(0.1),
+                    : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               ),
               child: Icon(
                 icon,
-                color: isDestructive ? AppColors.disconnected : AppColors.primary,
+                color: isDestructive ? AppColors.disconnected : Theme.of(context).colorScheme.primary,
                 size: AppDimensions.iconM,
               ),
             ),
@@ -401,15 +421,15 @@ class SettingsView extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDestructive ? AppColors.disconnected : AppColors.textPrimary,
+                      color: isDestructive ? AppColors.disconnected : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: AppTextStyles.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -417,7 +437,7 @@ class SettingsView extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios_rounded,
               size: AppDimensions.iconS,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             ),
           ],
         ),
