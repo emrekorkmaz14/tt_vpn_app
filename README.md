@@ -93,11 +93,11 @@
 
 <br>
 
-<img width="130" height="259" alt="Ekran Resmi 2025-07-27 01 46 57" src="https://github.com/user-attachments/assets/6050ecf4-68eb-4d82-ab44-76371a0f6976" />
-<img width="130" height="259" alt="Ekran Resmi 2025-07-27 01 47 34" src="https://github.com/user-attachments/assets/f020cadf-b7e7-4f38-80ea-bfd846578e1f" />
-<img width="130" height="259" alt="Ekran Resmi 2025-07-27 01 47 20" src="https://github.com/user-attachments/assets/ccabd568-2db8-4d1c-b585-bdb5cc4faa5f" />
-<img width="130" height="259" alt="Ekran Resmi 2025-07-27 01 47 06" src="https://github.com/user-attachments/assets/704cc82b-c4b8-4a39-af50-d8b08f29d46c" />
-<img width="130" height="259" alt="Ekran Resmi 2025-07-27 01 46 16" src="https://github.com/user-attachments/assets/5b62d41c-3759-4c47-b296-fe26d0cbaa64" />
+<img width="130" height="259" alt="Ekran Resmi 1" src="https://github.com/user-attachments/assets/6050ecf4-68eb-4d82-ab44-76371a0f6976" />
+<img width="130" height="259" alt="Ekran Resmi 2" src="https://github.com/user-attachments/assets/f020cadf-b7e7-4f38-80ea-bfd846578e1f" />
+<img width="130" height="259" alt="Ekran Resmi 3" src="https://github.com/user-attachments/assets/ccabd568-2db8-4d1c-b585-bdb5cc4faa5f" />
+<img width="130" height="259" alt="Ekran Resmi 4" src="https://github.com/user-attachments/assets/704cc82b-c4b8-4a39-af50-d8b08f29d46c" />
+<img width="130" height="259" alt="Ekran Resmi 5" src="https://github.com/user-attachments/assets/5b62d41c-3759-4c47-b296-fe26d0cbaa64" />
 
 <br><br>
 ***Bu proje case study amaçlı geliştirilmiştir.***
