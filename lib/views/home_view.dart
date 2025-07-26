@@ -56,9 +56,12 @@ class HomeView extends StatelessWidget {
                 const SizedBox(height: AppDimensions.paddingL),
                 Obx(() {
                   final isConnecting =
-                      controller.connectingCountryName.value.isNotEmpty;
+                      controller.connectingCountryName.value.isNotEmpty ||
+                          controller.connectionStatus.value ==
+                              ConnectionStatus.connecting;
                   final connectedCountry = controller.connectedCountry.value;
                   final connectionStatus = controller.connectionStatus.value;
+
                   if (isConnecting) {
                     return _buildConnectingCard(context, controller);
                   } else if (connectedCountry != null &&

@@ -57,6 +57,9 @@ class HomeController extends GetxController {
       uploadSpeed.value = mockConnectionStats.uploadSpeed;
       connectionDuration.value = mockConnectionStats.connectedTime;
 
+      // Update country connection status in the list
+      _updateCountryConnectionStatus(connectedCountryData, true);
+
       // Start timers
       _startConnectionTimer();
       _startSpeedUpdateTimer();
@@ -88,31 +91,34 @@ class HomeController extends GetxController {
   }
 
   Future<void> connectToCountry(Country country) async {
+    if (connectingCountryName.value == country.name) {
+      return;
+    }
+
     if (connectingCountryName.value.isNotEmpty) {
       return;
     }
 
-    connectingCountryName.value = country.name;
+    try {
+      connectingCountryName.value = country.name;
 
-    if (connectionStatus.value == ConnectionStatus.connected) {
-      connectionStatus.value = ConnectionStatus.disconnected;
+      if (connectionStatus.value == ConnectionStatus.connected) {
+        connectionStatus.value = ConnectionStatus.disconnected;
 
-      if (connectedCountry.value != null) {
-        _updateCountryConnectionStatus(connectedCountry.value!, false);
+        if (connectedCountry.value != null) {
+          _updateCountryConnectionStatus(connectedCountry.value!, false);
+        }
+
+        connectedCountry.value = null;
+        _resetConnectionStats();
+        _stopTimers();
+
+        await Future.delayed(const Duration(milliseconds: 300));
       }
 
-      connectedCountry.value = null;
-      _resetConnectionStats();
-      _stopTimers();
-
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
-
-    try {
       await Future.delayed(const Duration(seconds: 2));
 
       _updateCountryConnectionStatus(country, true);
-
       connectionStatus.value = ConnectionStatus.connected;
       connectedCountry.value = country;
 
@@ -129,20 +135,17 @@ class HomeController extends GetxController {
         duration: const Duration(seconds: 2),
       );
     } finally {
-      // 3. Her durumda connecting state'i temizle
       connectingCountryName.value = '';
     }
   }
 
   Future<void> disconnect() async {
-    if (connectionStatus.value == ConnectionStatus.disconnected) {
-      return;
-    }
+    if (connectionStatus.value == ConnectionStatus.disconnected) return;
+
+    connectingCountryName.value = '';
 
     connectionStatus.value = ConnectionStatus.disconnected;
-    connectingCountryName.value = ''; // Reset connecting state
 
-    // Update country connection status
     if (connectedCountry.value != null) {
       _updateCountryConnectionStatus(connectedCountry.value!, false);
     }
@@ -299,10 +302,7 @@ class HomeController extends GetxController {
     }
   }
 
-  // Check if country is available (not premium)
   bool isCountryAvailable(Country country) {
-    // In this mock implementation, all countries are free
-    // You can modify this logic based on your requirements
     return true;
   }
 

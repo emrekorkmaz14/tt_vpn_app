@@ -41,22 +41,18 @@ class CountryCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppDimensions.paddingM),
           child: Row(
             children: [
-              // Flag
               _buildFlag(),
               const SizedBox(width: AppDimensions.paddingM),
-              
-              // Country Info
+
               Expanded(child: _buildCountryInfo(context)),
-              
-              // Signal Strength (if needed)
+
               if (!showConnectionButton) _buildSignalStrength(context),
-              
-              // Connection Button
+
               if (showConnectionButton) ...[
                 _buildConnectionButton(context),
                 const SizedBox(width: AppDimensions.paddingS),
               ],
-              
+
               // Arrow
               if (showArrow) _buildArrow(context),
             ],
@@ -87,23 +83,24 @@ class CountryCard extends StatelessWidget {
         Text(
           country.name,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
         if (showLocationsCount)
           Text(
             '${country.locationCount} ${AppStrings.locations}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-            ),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
           ),
         if (country.city != null && country.city!.isNotEmpty)
           Text(
             country.city!,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
           ),
       ],
     );
@@ -125,9 +122,9 @@ class CountryCard extends StatelessWidget {
           child: Text(
             '${country.strength}%',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: _getSignalColor(),
-              fontWeight: FontWeight.w600,
-            ),
+                  color: _getSignalColor(),
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
         const SizedBox(height: 4),
@@ -164,7 +161,7 @@ class CountryCard extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: const SizedBox(
-          width: 16, // AppDimensions.iconS yerine sabit değer
+          width: 16,
           height: 16,
           child: CircularProgressIndicator(
             strokeWidth: 2,
@@ -175,7 +172,9 @@ class CountryCard extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: isConnecting ? null : onConnectTap, // isConnecting durumunda onTap'i disable et
+      onTap: isConnecting
+          ? null
+          : onConnectTap, // isConnecting durumunda onTap'i disable et
       child: Container(
         width: 40,
         height: 40,

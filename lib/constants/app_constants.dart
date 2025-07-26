@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class AppColors {
   // Light Theme Colors
@@ -18,7 +17,7 @@ class AppColors {
   static const Color textSecondaryDark = Color(0xFFBBBBBB);
   static const Color textHintDark = Color(0xFF777777);
 
-  // Static Colors (tema bağımsız)
+  // Static Colors
   static const Color connected = Color(0xFF00D589);
   static const Color disconnected = Color(0xFFE63946);
   static const Color connecting = Color(0xFFFF9500);
