@@ -28,17 +28,8 @@ class AppColors {
   static const Color light = Color(0xFFCCCCCC);
   static const Color medium = Color(0xFF999999);
   static const Color dark = Color(0xFF333333);
-
-  // Context-based colors (Bu getter'lar artık gerekli değil ama geriye uyumluluk için bırakıyoruz)
-  static Color get primary => primaryLight;
-  static Color get background => backgroundLight;
-  static Color get cardBackground => cardBackgroundLight;
-  static Color get textPrimary => textPrimaryLight;
-  static Color get textSecondary => textSecondaryLight;
-  static Color get textHint => textHintLight;
 }
 
-// Tema tanımları
 class AppThemes {
   static ThemeData get lightTheme {
     return ThemeData(
@@ -236,110 +227,6 @@ class AppThemes {
   }
 }
 
-// Context-aware TextStyles
-class AppTextStyles {
-  static TextStyle get h1 => TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w800,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get h2 => TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get h3 => TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get bodyLarge => TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get bodyMedium => TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get caption => TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: _getSecondaryTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get searchHint => TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: _getHintTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get label => TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: _getSecondaryTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get timerText => TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get countryName => TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get cityName => TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: _getSecondaryTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  static TextStyle get speedText => TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: _getTextColor(),
-        fontFamily: 'Gilroy',
-      );
-
-  // Tema-aware renk helper'ları
-  static Color _getTextColor() {
-    return Theme.of(Get.context!).colorScheme.onBackground;
-  }
-
-  static Color _getSecondaryTextColor() {
-    return Theme.of(Get.context!).brightness == Brightness.dark
-        ? AppColors.textSecondaryDark
-        : AppColors.textSecondaryLight;
-  }
-
-  static Color _getHintTextColor() {
-    return Theme.of(Get.context!).brightness == Brightness.dark
-        ? AppColors.textHintDark
-        : AppColors.textHintLight;
-  }
-}
-
 // Helper extension
 extension ThemeHelper on BuildContext {
   bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;
@@ -446,7 +333,7 @@ class AppStrings {
   static const String dataCleared = 'All data has been cleared successfully';
 }
 
-// Uygulama Sabitleri
+// App Constants
 class AppConstants {
   static const int timerUpdateInterval = 1;
   static const int speedUpdateInterval = 2;

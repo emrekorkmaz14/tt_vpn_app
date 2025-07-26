@@ -87,21 +87,16 @@ class HomeController extends GetxController {
     }
   }
 
-// Connect to a country metodunu şu şekilde güncelleyin
   Future<void> connectToCountry(Country country) async {
     if (connectingCountryName.value.isNotEmpty) {
-      return; // Başka bir ülke bağlanıyorsa
+      return;
     }
 
-    // ÖNCE connecting state'i ayarla
     connectingCountryName.value = country.name;
 
-    // Disconnect current country if connected
     if (connectionStatus.value == ConnectionStatus.connected) {
-      // Disconnect işlemini sessizce yap - UI'da connecting göster
       connectionStatus.value = ConnectionStatus.disconnected;
 
-      // Update country connection status
       if (connectedCountry.value != null) {
         _updateCountryConnectionStatus(connectedCountry.value!, false);
       }
@@ -110,16 +105,12 @@ class HomeController extends GetxController {
       _resetConnectionStats();
       _stopTimers();
 
-      // Kısa bekleme süresi - ama UI'da connecting görünür
-      await Future.delayed(
-          const Duration(milliseconds: 300)); // 500'den 300'e düşürdük
+      await Future.delayed(const Duration(milliseconds: 300));
     }
 
     try {
-      // Simulate connection process
       await Future.delayed(const Duration(seconds: 2));
 
-      // Update country connection status
       _updateCountryConnectionStatus(country, true);
 
       connectionStatus.value = ConnectionStatus.connected;
@@ -138,13 +129,15 @@ class HomeController extends GetxController {
         duration: const Duration(seconds: 2),
       );
     } finally {
-      connectingCountryName.value = ''; // Bağlantı işlemi bitti
+      // 3. Her durumda connecting state'i temizle
+      connectingCountryName.value = '';
     }
   }
 
-  // Disconnect metodunu da güncelleyin
   Future<void> disconnect() async {
-    if (connectionStatus.value == ConnectionStatus.disconnected) return;
+    if (connectionStatus.value == ConnectionStatus.disconnected) {
+      return;
+    }
 
     connectionStatus.value = ConnectionStatus.disconnected;
     connectingCountryName.value = ''; // Reset connecting state
@@ -159,14 +152,11 @@ class HomeController extends GetxController {
     _stopTimers();
   }
 
-  // Update country connection status in the list
   void _updateCountryConnectionStatus(Country country, bool isConnected) {
-    // Reset all countries
     for (var c in countries) {
       c.isConnected = false;
     }
 
-    // Set the selected country as connected
     if (isConnected) {
       final index = countries.indexWhere((c) => c.name == country.name);
       if (index != -1) {
@@ -174,11 +164,25 @@ class HomeController extends GetxController {
       }
     }
 
-    // Update filtered list
-    _filterCountries();
+    countries.refresh();
+
+    if (searchQuery.value.isEmpty) {
+      filteredCountries.assignAll(countries);
+    } else {
+      final query = searchQuery.value.toLowerCase();
+      filteredCountries.assignAll(
+        countries
+            .where((c) =>
+                c.name.toLowerCase().contains(query) ||
+                (c.city?.toLowerCase().contains(query) ?? false))
+            .toList(),
+      );
+    }
+
+    // ignore: unused_local_variable
+    for (var c in countries.take(3)) {}
   }
 
-  // Reset connection statistics
   void _resetConnectionStats() {
     downloadSpeed.value = 0;
     uploadSpeed.value = 0;

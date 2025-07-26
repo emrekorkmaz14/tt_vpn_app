@@ -6,6 +6,8 @@ import 'package:tt_vpn_app/constants/app_constants.dart';
 import 'package:tt_vpn_app/models/country_model.dart';
 import 'package:tt_vpn_app/views/settings_view.dart';
 import 'package:tt_vpn_app/views/widgets/app_header.dart';
+import 'package:tt_vpn_app/views/widgets/country_card.dart';
+import 'package:tt_vpn_app/views/widgets/speed_stat_card.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -452,103 +454,34 @@ class HomeView extends StatelessWidget {
 
   Widget _buildSpeedStatsCard(BuildContext context, HomeController controller) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Card(
-            color: Theme.of(context).colorScheme.surface,
-            elevation: 2,
-            margin: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingXXL,
-              0,
-              AppDimensions.paddingXS,
-              AppDimensions.paddingM,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: AppDimensions.paddingXXL,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: _buildSpeedItem(
-                context,
-                controller,
-                AppAssets.iconImport,
-                AppStrings.download,
-                () => controller.downloadSpeed.value,
-                AppColors.connected,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Card(
-            color: Theme.of(context).colorScheme.surface,
-            elevation: 2,
-            margin: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingXS,
-              0,
-              AppDimensions.paddingXXL,
-              AppDimensions.paddingM,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: _buildSpeedItem(
-                context,
-                controller,
-                AppAssets.iconExport,
-                AppStrings.upload,
-                () => controller.uploadSpeed.value,
-                AppColors.disconnected,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSpeedItem(
-    BuildContext context,
-    HomeController controller,
-    String iconPath,
-    String label,
-    int Function() speedGetter,
-    Color color,
-  ) {
-    return Row(
-      children: [
-        Container(
-          height: AppDimensions.iconL,
-          width: AppDimensions.iconL,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: color.withOpacity(0.15),
-          ),
-          alignment: Alignment.center,
-          child: SvgPicture.asset(
-            iconPath,
-            width: AppDimensions.iconM,
-            height: AppDimensions.iconM,
-          ),
-        ),
-        const SizedBox(width: AppDimensions.paddingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
-                  ),
-            ),
-            Obx(() => Text(
-                  '${speedGetter()} ${AppStrings.mbUnit}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+            child: Obx(() => SpeedStatCard(
+                  iconPath: AppAssets.iconImport,
+                  label: AppStrings.download,
+                  value: controller.downloadSpeed.value,
+                  unit: AppStrings.mbUnit,
+                  color: AppColors.connected,
                 )),
-          ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              right: AppDimensions.paddingXXL,
+            ),
+            child: Obx(() => SpeedStatCard(
+                  iconPath: AppAssets.iconExport,
+                  label: AppStrings.upload,
+                  value: controller.uploadSpeed.value,
+                  unit: AppStrings.mbUnit,
+                  color: AppColors.disconnected,
+                )),
+          ),
         ),
       ],
     );
@@ -598,156 +531,25 @@ class HomeView extends StatelessWidget {
         itemCount: filteredCountries.length,
         itemBuilder: (context, index) {
           final country = filteredCountries[index];
-          return _buildCountryCard(context, controller, country);
+          final isConnecting =
+              controller.connectingCountryName.value == country.name;
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppDimensions.paddingXL),
+            child: CountryCard(
+              country: country,
+              isConnected: country.isConnected,
+              isConnecting: isConnecting,
+              onConnectTap: () {
+                if (country.isConnected) {
+                  controller.disconnect();
+                } else {
+                  controller.connectToCountry(country);
+                }
+              },
+            ),
+          );
         },
-      );
-    });
-  }
-
-  Widget _buildCountryCard(
-      BuildContext context, HomeController controller, Country country) {
-    return Card(
-      color: Theme.of(context).colorScheme.surface,
-      elevation: 2,
-      margin: const EdgeInsets.fromLTRB(
-        AppDimensions.paddingXL,
-        0,
-        AppDimensions.paddingXL,
-        AppDimensions.paddingM,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Row(
-          children: [
-            Container(
-              width: AppDimensions.flagWidth,
-              height: AppDimensions.flagHeight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-                image: DecorationImage(
-                  image: AssetImage(country.flag),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-
-            const SizedBox(width: AppDimensions.paddingM),
-
-            // Country Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    country.name,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                  ),
-                  Text(
-                    '${country.locationCount} ${AppStrings.locations}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.7),
-                        ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Connection Button
-            _buildConnectionButton(context, controller, country),
-            const SizedBox(width: AppDimensions.paddingS),
-            _buildArrowButton(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Container _buildArrowButton(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-      alignment: Alignment.center,
-      child: Center(
-        child: SizedBox(
-          width: AppDimensions.iconS,
-          height: AppDimensions.iconS,
-          child: SvgPicture.asset(
-            "assets/icons/arrow-right.svg",
-            colorFilter: ColorFilter.mode(
-              Theme.of(context).colorScheme.onSurface,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildConnectionButton(
-      BuildContext context, HomeController controller, Country country) {
-    return Obx(() {
-      final isConnected = country.isConnected;
-      final isConnecting =
-          controller.connectingCountryName.value == country.name;
-
-      if (isConnecting) {
-        return Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppColors.connecting,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-          ),
-          alignment: Alignment.center,
-          child: const Center(
-            child: SizedBox(
-              width: AppDimensions.iconS,
-              height: AppDimensions.iconS,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-              ),
-            ),
-          ),
-        );
-      }
-
-      return GestureDetector(
-        onTap: () {
-          if (isConnected) {
-            controller.disconnect();
-          } else {
-            controller.connectToCountry(country);
-          }
-        },
-        child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isConnected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-            ),
-            alignment: Alignment.center,
-            child: SvgPicture.asset(
-              "assets/icons/timer.svg",
-              color: isConnected
-                  ? AppColors.white
-                  : Theme.of(context).colorScheme.onSurface,
-              width: AppDimensions.iconM,
-              height: AppDimensions.iconM,
-            )),
       );
     });
   }
