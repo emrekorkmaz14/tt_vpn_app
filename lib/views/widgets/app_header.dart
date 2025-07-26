@@ -30,6 +30,7 @@ class AppHeader extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
+        color: AppColors.primaryLight,
             image: AssetImage("assets/images/headerBg.png"), fit: BoxFit.cover),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(36),
