@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:tt_vpn_app/constants/constants.dart';
+import 'package:tt_vpn_app/constants/app_constants.dart';
 
 class AppHeader extends StatelessWidget {
   final String title;

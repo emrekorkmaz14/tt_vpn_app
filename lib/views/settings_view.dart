@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tt_vpn_app/controllers/settings_controller.dart';
 import 'package:tt_vpn_app/controllers/theme_controllers.dart';
-import 'package:tt_vpn_app/constants/constants.dart';
+import 'package:tt_vpn_app/constants/app_constants.dart';
 import 'package:tt_vpn_app/views/widgets/app_header.dart';
 
 class SettingsView extends StatelessWidget {
@@ -19,7 +19,6 @@ class SettingsView extends StatelessWidget {
         children: [
           const AppHeader(
             title: AppStrings.settings,
-            showBackButton: true,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -29,19 +28,13 @@ class SettingsView extends StatelessWidget {
                 children: [
                   _buildSectionTitle(context, AppStrings.appearance),
                   _buildThemeSection(context, themeController),
-                  
                   const SizedBox(height: AppDimensions.paddingXL),
-                  
                   _buildSectionTitle(context, AppStrings.vpnSettings),
                   _buildVPNSettings(context, controller),
-                  
                   const SizedBox(height: AppDimensions.paddingXL),
-                  
                   _buildSectionTitle(context, AppStrings.general),
                   _buildGeneralSettings(context, controller),
-                  
                   const SizedBox(height: AppDimensions.paddingXL),
-                  
                   _buildSectionTitle(context, AppStrings.about),
                   _buildAboutSection(context, controller),
                 ],
@@ -59,14 +52,15 @@ class SettingsView extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
     );
   }
 
-  Widget _buildThemeSection(BuildContext context, ThemeController themeController) {
+  Widget _buildThemeSection(
+      BuildContext context, ThemeController themeController) {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 2,
@@ -92,14 +86,6 @@ class SettingsView extends StatelessWidget {
               Icons.dark_mode,
               ThemeMode.dark,
             ),
-            const Divider(height: 1),
-            _buildThemeOption(
-              context,
-              themeController,
-              AppStrings.systemTheme,
-              Icons.brightness_auto,
-              ThemeMode.system,
-            ),
           ],
         ),
       ),
@@ -115,7 +101,7 @@ class SettingsView extends StatelessWidget {
   ) {
     return Obx(() {
       final isSelected = themeController.themeMode == mode;
-      
+
       return InkWell(
         onTap: () => themeController.setThemeMode(mode),
         borderRadius: BorderRadius.circular(AppDimensions.radiusM),
@@ -129,14 +115,19 @@ class SettingsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppDimensions.paddingS),
                 decoration: BoxDecoration(
-                  color: isSelected 
+                  color: isSelected
                       ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppDimensions.radiusS),
                 ),
                 child: Icon(
                   icon,
-                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
                   size: AppDimensions.iconM,
                 ),
               ),
@@ -145,9 +136,12 @@ class SettingsView extends StatelessWidget {
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  ),
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurface,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
+                      ),
                 ),
               ),
               if (isSelected)
@@ -163,7 +157,8 @@ class SettingsView extends StatelessWidget {
     });
   }
 
-  Widget _buildVPNSettings(BuildContext context, SettingsController controller) {
+  Widget _buildVPNSettings(
+      BuildContext context, SettingsController controller) {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 2,
@@ -201,7 +196,8 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildGeneralSettings(BuildContext context, SettingsController controller) {
+  Widget _buildGeneralSettings(
+      BuildContext context, SettingsController controller) {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 2,
@@ -227,7 +223,8 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildAboutSection(BuildContext context, SettingsController controller) {
+  Widget _buildAboutSection(
+      BuildContext context, SettingsController controller) {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 2,
@@ -297,8 +294,8 @@ class SettingsView extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -319,7 +316,8 @@ class SettingsView extends StatelessWidget {
     });
   }
 
-  Widget _buildProtocolSelector(BuildContext context, SettingsController controller) {
+  Widget _buildProtocolSelector(
+      BuildContext context, SettingsController controller) {
     return Obx(() {
       return Padding(
         padding: const EdgeInsets.symmetric(
@@ -348,8 +346,8 @@ class SettingsView extends StatelessWidget {
                   Text(
                     AppStrings.protocol,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -403,14 +401,16 @@ class SettingsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppDimensions.paddingS),
               decoration: BoxDecoration(
-                color: isDestructive 
+                color: isDestructive
                     ? AppColors.disconnected.withOpacity(0.1)
                     : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               ),
               child: Icon(
                 icon,
-                color: isDestructive ? AppColors.disconnected : Theme.of(context).colorScheme.primary,
+                color: isDestructive
+                    ? AppColors.disconnected
+                    : Theme.of(context).colorScheme.primary,
                 size: AppDimensions.iconM,
               ),
             ),
@@ -422,9 +422,11 @@ class SettingsView extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: isDestructive ? AppColors.disconnected : Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.w600,
+                          color: isDestructive
+                              ? AppColors.disconnected
+                              : Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   const SizedBox(height: 2),
                   Text(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tt_vpn_app/controllers/country_controller.dart';
-import 'package:tt_vpn_app/constants/constants.dart';
+import 'package:tt_vpn_app/constants/app_constants.dart';
 import 'package:tt_vpn_app/models/country_model.dart';
 import 'package:tt_vpn_app/views/widgets/app_header.dart';
 

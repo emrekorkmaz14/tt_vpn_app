@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:tt_vpn_app/models/country_model.dart';
 import 'package:tt_vpn_app/data/mockdata.dart';
-import 'package:tt_vpn_app/constants/constants.dart';
+import 'package:tt_vpn_app/constants/app_constants.dart';
 
 enum ConnectionStatus { disconnected, connecting, connected }
 
@@ -249,20 +249,15 @@ class HomeController extends GetxController {
 
   void changeBottomNavIndex(int index) {
     selectedBottomNavIndex.value = index;
-
     switch (index) {
       case 0:
-        // Countries tab - already on home
         break;
       case 1:
-        // Disconnect
         if (connectionStatus.value == ConnectionStatus.connected) {
           disconnect();
         }
         break;
       case 2:
-        // Settings
-        Get.toNamed('/settings'); // Bu satır güncellendi
         break;
     }
   }

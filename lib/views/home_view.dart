@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:tt_vpn_app/controllers/home_controller.dart';
-import 'package:tt_vpn_app/constants/constants.dart';
+import 'package:tt_vpn_app/constants/app_constants.dart';
 import 'package:tt_vpn_app/models/country_model.dart';
+import 'package:tt_vpn_app/views/settings_view.dart';
 import 'package:tt_vpn_app/views/widgets/app_header.dart';
 
 class HomeView extends StatelessWidget {
@@ -15,76 +16,87 @@ class HomeView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Column(
-        children: [
-          AppHeader(
-            title: AppStrings.countries,
-            showSearchBar: true,
-            searchHint: AppStrings.searchHint,
-            onSearchTap: () => Get.toNamed('/country-selection'),
-            leftIcon: SvgPicture.asset(
-              AppAssets.iconCategory,
-              width: AppDimensions.iconM,
-              height: AppDimensions.iconM,
-            ),
-            rightIcon: SvgPicture.asset(
-              AppAssets.iconCrown,
-              width: AppDimensions.iconM,
-              height: AppDimensions.iconM,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingL),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildConnectionTimeCard(context, controller),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Obx(() {
-                    final isConnecting =
-                        controller.connectingCountryName.value.isNotEmpty;
-                    final connectedCountry = controller.connectedCountry.value;
-                    final connectionStatus = controller.connectionStatus.value;
-                    if (isConnecting) {
-                      return _buildConnectingCard(context, controller);
-                    } else if (connectedCountry != null &&
-                        connectionStatus == ConnectionStatus.connected) {
-                      return _buildConnectedCountryCard(
-                          context, controller, connectedCountry);
-                    } else {
-                      return _buildDisconnectedCard(context);
-                    }
-                  }),
-                  _buildSpeedStatsCard(context, controller),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  _buildFreeLocationsHeader(context, controller),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  _buildCountriesList(context, controller),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      body: Obx(() {
+        if (controller.selectedBottomNavIndex.value == 2) {
+          return const SettingsView();
+        }
+        return _buildHomeView(context, controller);
+      }),
       bottomNavigationBar: _buildBottomNavigationBar(context, controller),
     );
   }
 
-  Widget _buildConnectionTimeCard(BuildContext context, HomeController controller) {
+  Column _buildHomeView(BuildContext context, HomeController controller) {
+    return Column(
+      children: [
+        AppHeader(
+          title: AppStrings.countries,
+          showSearchBar: true,
+          searchHint: AppStrings.searchHint,
+          onSearchTap: () => Get.toNamed('/country-selection'),
+          leftIcon: SvgPicture.asset(
+            AppAssets.iconCategory,
+            width: AppDimensions.iconM,
+            height: AppDimensions.iconM,
+          ),
+          rightIcon: SvgPicture.asset(
+            AppAssets.iconCrown,
+            width: AppDimensions.iconM,
+            height: AppDimensions.iconM,
+          ),
+        ),
+        const SizedBox(height: AppDimensions.paddingL),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildConnectionTimeCard(context, controller),
+                const SizedBox(height: AppDimensions.paddingL),
+                Obx(() {
+                  final isConnecting =
+                      controller.connectingCountryName.value.isNotEmpty;
+                  final connectedCountry = controller.connectedCountry.value;
+                  final connectionStatus = controller.connectionStatus.value;
+                  if (isConnecting) {
+                    return _buildConnectingCard(context, controller);
+                  } else if (connectedCountry != null &&
+                      connectionStatus == ConnectionStatus.connected) {
+                    return _buildConnectedCountryCard(
+                        context, controller, connectedCountry);
+                  } else {
+                    return _buildDisconnectedCard(context);
+                  }
+                }),
+                _buildSpeedStatsCard(context, controller),
+                const SizedBox(height: AppDimensions.paddingL),
+                _buildFreeLocationsHeader(context, controller),
+                const SizedBox(height: AppDimensions.paddingS),
+                _buildCountriesList(context, controller),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectionTimeCard(
+      BuildContext context, HomeController controller) {
     return Column(
       children: [
         Text(
           AppStrings.connectingTime,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
-          ),
+                color:
+                    Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
+              ),
         ),
         Obx(() => Text(
               controller.formattedConnectionTime,
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
             )),
       ],
     );
@@ -127,16 +139,19 @@ class HomeView extends StatelessWidget {
                   Text(
                     country.name,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   if (country.city != null && country.city!.isNotEmpty)
                     Text(
                       country.city!,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
+                          ),
                     ),
                 ],
               ),
@@ -149,15 +164,18 @@ class HomeView extends StatelessWidget {
                 Text(
                   AppStrings.stealth,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                  ),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
                 ),
                 const SizedBox(width: AppDimensions.paddingS),
                 Text(
                   '${country.strength}%',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ],
             ),
@@ -228,10 +246,11 @@ class HomeView extends StatelessWidget {
                         opacity: value,
                         child: Text(
                           "Not Connected",
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.disconnected,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.disconnected,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
                       );
                     },
@@ -245,9 +264,13 @@ class HomeView extends StatelessWidget {
                         opacity: value,
                         child: Text(
                           "Choose a location",
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                       );
                     },
@@ -362,9 +385,9 @@ class HomeView extends StatelessWidget {
                       return Text(
                         "Connecting${"." * ((value % 4))}",
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.connecting,
-                          fontWeight: FontWeight.w600,
-                        ),
+                              color: AppColors.connecting,
+                              fontWeight: FontWeight.w600,
+                            ),
                       );
                     },
                   ),
@@ -382,9 +405,15 @@ class HomeView extends StatelessWidget {
                             connectingCountry.isNotEmpty
                                 ? "to $connectingCountry"
                                 : "Please wait",
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.7),
+                                ),
                           ),
                         );
                       },
@@ -506,15 +535,18 @@ class HomeView extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             Obx(() => Text(
                   '${speedGetter()} ${AppStrings.mbUnit}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 )),
           ],
         ),
@@ -522,7 +554,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildFreeLocationsHeader(BuildContext context, HomeController controller) {
+  Widget _buildFreeLocationsHeader(
+      BuildContext context, HomeController controller) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppDimensions.paddingXL,
@@ -535,8 +568,8 @@ class HomeView extends StatelessWidget {
           Text(
             '${AppStrings.freeLocations} (${controller.countries.length})',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
           ),
           const Spacer(),
           Container(
@@ -571,7 +604,8 @@ class HomeView extends StatelessWidget {
     });
   }
 
-  Widget _buildCountryCard(BuildContext context, HomeController controller, Country country) {
+  Widget _buildCountryCard(
+      BuildContext context, HomeController controller, Country country) {
     return Card(
       color: Theme.of(context).colorScheme.surface,
       elevation: 2,
@@ -607,15 +641,18 @@ class HomeView extends StatelessWidget {
                   Text(
                     country.name,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   Text(
                     '${country.locationCount} ${AppStrings.locations}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.7),
+                        ),
                   ),
                 ],
               ),
@@ -656,7 +693,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildConnectionButton(BuildContext context, HomeController controller, Country country) {
+  Widget _buildConnectionButton(
+      BuildContext context, HomeController controller, Country country) {
     return Obx(() {
       final isConnected = country.isConnected;
       final isConnecting =
@@ -704,7 +742,9 @@ class HomeView extends StatelessWidget {
             alignment: Alignment.center,
             child: SvgPicture.asset(
               "assets/icons/timer.svg",
-              color: isConnected ? AppColors.white : Theme.of(context).colorScheme.onSurface,
+              color: isConnected
+                  ? AppColors.white
+                  : Theme.of(context).colorScheme.onSurface,
               width: AppDimensions.iconM,
               height: AppDimensions.iconM,
             )),
@@ -712,7 +752,8 @@ class HomeView extends StatelessWidget {
     });
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context, HomeController controller) {
+  Widget _buildBottomNavigationBar(
+      BuildContext context, HomeController controller) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -789,7 +830,12 @@ class HomeView extends StatelessWidget {
                 width: AppDimensions.iconNavBar,
                 height: AppDimensions.iconNavBar,
                 colorFilter: ColorFilter.mode(
-                  isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                   BlendMode.srcIn,
                 ),
               ),
@@ -797,9 +843,15 @@ class HomeView extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6),
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
               ),
             ],
           ),
