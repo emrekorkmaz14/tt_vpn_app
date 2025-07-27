@@ -29,6 +29,7 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
+        color: AppColors.primaryLight,
         image: DecorationImage(
             image: AssetImage("assets/images/headerBg.png"), fit: BoxFit.cover),
         borderRadius: BorderRadius.only(
